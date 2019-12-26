@@ -1,5 +1,11 @@
-board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
-players = ['X', 'Y']
+def print_board(board):
+    print("...............")
+    print('| ' + board[0][0] + ' || ' + board[0][1] + ' || ' + board[0][2] + ' |')
+    print("...............")
+    print('| ' + board[1][0] + ' || ' + board[1][1] + ' || ' + board[1][2] + ' |')
+    print("...............")
+    print('| ' + board[2][0] + ' || ' + board[2][1] + ' || ' + board[2][2] + ' |')
+    print("...............")
 
 def next_move(board, player, box):
     if board[(box-1)//3][(box-1)%3] == ' ':
@@ -46,3 +52,54 @@ def check_win(board):
     if draw:
         return None, "Draw"
     return None, "Not Done"
+
+def best_move(board, player):
+    winner_loser, end = check_win(board)
+    if winner == 'X' and end == "Done":
+        return 1
+    elif winner == 'O' and end == "Done":
+        return -1
+    elif end == "Draw":
+        return 0
+
+    moves = []
+    empty_cells = []
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == ' ':
+                empty_cells.append(((i*3)+1)+(j%3))
+    
+    for cell in empty_cells:
+        move = {}
+        move['index'] = cell
+        new_state = copy_board(board)
+        next_move(new_state, player, cell)
+
+        if player == 'X':
+            result = best_move(new_state, 'O')
+            move['result'] = result
+        else:
+            result = best_move(new_state, 'X')
+            move['result'] = result
+        
+        moves.append(move)
+    
+    #Find best move
+    best_move = None
+    if player == 'X':
+        best = -infinity
+        for move in moves:
+            if move['result'] > best:
+                best_move = move['index']
+    else:
+        best = infinity
+        for move in moves:
+            if move['result'] < best:
+                best_move = move['index']
+    
+    return best_move
+
+if __name__ == "__main__":
+    board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+    players = ['X', 'O']
+    print_board(board)
