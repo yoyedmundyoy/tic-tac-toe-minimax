@@ -1,3 +1,5 @@
+import math
+
 def print_board(board):
     print("...............")
     print('| ' + board[0][0] + ' || ' + board[0][1] + ' || ' + board[0][2] + ' |')
@@ -53,11 +55,11 @@ def check_win(board):
         return None, "Draw"
     return None, "Not Done"
 
-def best_move(board, player):
+def get_best_move(board, player):
     winner_loser, end = check_win(board)
-    if winner == 'X' and end == "Done":
+    if winner_loser == 'X' and end == "Done":
         return 1
-    elif winner == 'O' and end == "Done":
+    elif winner_loser == 'O' and end == "Done":
         return -1
     elif end == "Draw":
         return 0
@@ -77,10 +79,10 @@ def best_move(board, player):
 
         # If AI player
         if player == 'X':
-            result = best_move(new_state, 'O')
+            result = get_best_move(new_state, 'O')
             move['result'] = result
         else:
-            result = best_move(new_state, 'X')
+            result = get_best_move(new_state, 'X')
             move['result'] = result
         
         moves.append(move)
@@ -88,12 +90,12 @@ def best_move(board, player):
     #Find best move
     best_move = None
     if player == 'X':
-        best = -infinity
+        best = -math.inf
         for move in moves:
             if move['result'] > best:
                 best_move = move['index']
     else:
-        best = infinity
+        best = math.inf
         for move in moves:
             if move['result'] < best:
                 best_move = move['index']
@@ -101,34 +103,32 @@ def best_move(board, player):
     return best_move
 
 if __name__ == "__main__":
-    #play = 'Y'
-    #while play == 'Y':
-    board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
-    players = ['X', 'O']
-    player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start:\t")
-    if player == 'X' or player =='x':
-        player = 0
-    elif player == 'Y' or player == 'y':
-        player = 1
-    print("START!")
-    print_board(board)
-    winner_loser, end = check_win(board)
-    while end == "Not Done":
-        if player == 0:
-            next_move(board, players[player], best_move(board, players[player]))
-        elif player == 1:
-            play = int(input("Enter index of box you wish to play."))
-            next_move(board, players[player], play)
+    play = 'Y'
+    while play == 'Y':
+        board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+        players = ['X', 'O']
+        player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start:\t")
+        if player == 'X' or player =='x':
+            player_idx = 0
+        elif player == 'Y' or player == 'y':
+            player_idx = 1
+        current_state = "Not Done"
+        winner = None
+        print("START!")
         print_board(board)
-        winner_loser, end = check_win(board)
-        if end == 'Draw':
-            print("Draw!")
-            break
-        elif end == 'Done':
-            print("Winner is "+winner_loser+"!")
-        player = (player + 1)%2
-            
-        
-
-
-
+        while current_state == "Not Done":
+            if player_idx == 0:
+                best_box = get_best_move(board, players[player_idx])
+                next_move(board, player[player_idx], best_box)
+            elif player_idx == 1:
+                play = int(input("Enter index of box you wish to play."))
+                next_move(board, players[player_idx], play)
+            print_board(board)
+            winner_loser, end = check_win(board)
+            if end == 'Draw':
+                print("Draw!")
+            elif end == 'Done':
+                print("Winner is "+winner_loser+"!")
+            player_idx = (player + 1)%2
+        play = input("Play again? Y/N")
+    print("Game end gg")
