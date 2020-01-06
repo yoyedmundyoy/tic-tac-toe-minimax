@@ -75,6 +75,7 @@ def best_move(board, player):
         new_state = copy_board(board)
         next_move(new_state, player, cell)
 
+        # If AI player
         if player == 'X':
             result = best_move(new_state, 'O')
             move['result'] = result
@@ -100,6 +101,34 @@ def best_move(board, player):
     return best_move
 
 if __name__ == "__main__":
+    #play = 'Y'
+    #while play == 'Y':
     board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
     players = ['X', 'O']
+    player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start:\t")
+    if player == 'X' or player =='x':
+        player = 0
+    elif player == 'Y' or player == 'y':
+        player = 1
+    print("START!")
     print_board(board)
+    winner_loser, end = check_win(board)
+    while end == "Not Done":
+        if player == 0:
+            next_move(board, players[player], best_move(board, players[player]))
+        elif player == 1:
+            play = int(input("Enter index of box you wish to play."))
+            next_move(board, players[player], play)
+        print_board(board)
+        winner_loser, end = check_win(board)
+        if end == 'Draw':
+            print("Draw!")
+            break
+        elif end == 'Done':
+            print("Winner is "+winner_loser+"!")
+        player = (player + 1)%2
+            
+        
+
+
+
