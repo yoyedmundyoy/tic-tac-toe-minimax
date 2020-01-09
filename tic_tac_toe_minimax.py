@@ -27,24 +27,25 @@ def copy_board(board):
 
 def check_win(board):
     #Horizontals
-    if board[0][0] == board[0][1] == board[0][2]:
-        return board[0][0], "Done"
-    if board[1][0] == board[1][1] == board[1][2]:
-        return board[1][0], "Done"
-    if board[2][0] == board[2][1] == board[2][2]:
-        return board[2][0], "Done"
-    #Verticals
-    if board[0][0] == board[1][0] == board[2][0]:
-        return board[0][0], "Done"
-    if board[0][1] == board[1][1] == board[1][1]:
-        return board[0][1], "Done"
-    if board[0][2] == board[1][2] == board[2][2]:
-        return board[0][2], "Done"
-    #Diagonals
-    if board[0][0] == board[1][1] == board[2][2]:
-        return board[0][0], "Done"
-    if board[0][2] == board[1][1] == board[2][0]:
-        return board[0][2], "Done"
+    for player in players:
+        if board[0][0] == board[0][1] == board[0][2]==player:
+            return board[0][0], "Done"
+        if board[1][0] == board[1][1] == board[1][2]==player:
+            return board[1][0], "Done"
+        if board[2][0] == board[2][1] == board[2][2]==player:
+            return board[2][0], "Done"
+        #Verticals
+        if board[0][0] == board[1][0] == board[2][0]==player:
+            return board[0][0], "Done"
+        if board[0][1] == board[1][1] == board[1][1]==player:
+            return board[0][1], "Done"
+        if board[0][2] == board[1][2] == board[2][2]==player:
+            return board[0][2], "Done"
+        #Diagonals
+        if board[0][0] == board[1][1] == board[2][2]==player:
+            return board[0][0], "Done"
+        if board[0][2] == board[1][1] == board[2][0]==player:
+            return board[0][2], "Done"
     #Check for draw
     draw = True
     for i in range(3):
@@ -56,6 +57,8 @@ def check_win(board):
     return None, "Not Done"
 
 def get_best_move(board, player):
+    winner_loser = None
+    end = None
     winner_loser, end = check_win(board)
     if winner_loser == 'X' and end == "Done":
         return 1
@@ -93,11 +96,13 @@ def get_best_move(board, player):
         best = -math.inf
         for move in moves:
             if move['result'] > best:
+                best = move['result']
                 best_move = move['index']
     else:
         best = math.inf
         for move in moves:
             if move['result'] < best:
+                best = move['result']
                 best_move = move['index']
     
     return best_move
@@ -107,7 +112,7 @@ if __name__ == "__main__":
     while play == 'Y':
         board = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
         players = ['X', 'O']
-        player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start:\t")
+        player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start: ")
         if player == 'X' or player =='x':
             player_idx = 0
         elif player == 'Y' or player == 'y':
@@ -115,20 +120,23 @@ if __name__ == "__main__":
         current_state = "Not Done"
         winner = None
         print("START!")
-        print_board(board)
         while current_state == "Not Done":
+            print_board(board)
+            #If AI player
             if player_idx == 0:
                 best_box = get_best_move(board, players[player_idx])
-                next_move(board, player[player_idx], best_box)
-            elif player_idx == 1:
-                play = int(input("Enter index of box you wish to play."))
+                next_move(board, players[player_idx], best_box)
+                print("AI plays box: "+str(best_box)+".")
+            #If human player
+            else: 
+                play = int(input("Your turn, enter index of box you wish to play:\t"))
                 next_move(board, players[player_idx], play)
-            print_board(board)
-            winner_loser, end = check_win(board)
-            if end == 'Draw':
+            winner, current_state = check_win(board)
+            if winner is not None:
+                if winner == 'X':
+                    print("You have lost to the bot! AI Wins!")
+            elif current_state is "Draw":
                 print("Draw!")
-            elif end == 'Done':
-                print("Winner is "+winner_loser+"!")
-            player_idx = (player + 1)%2
-        play = input("Play again? Y/N")
-    print("Game end gg")
+            player_idx = (player_idx + 1)%2
+        play = input("Play again? Y/N:\n")
+    print("---Game end gg---")
