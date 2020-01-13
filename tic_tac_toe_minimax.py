@@ -98,7 +98,7 @@ def get_best_move(board, player):
             if move['result'] > best:
                 best = move['result']
                 best_move = move['index']
-    else:
+    elif player == 'O':
         best = math.inf
         for move in moves:
             if move['result'] < best:
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         player = input("Choose which player to start, \'X\' for AI start, \'O\' if you want to start: ")
         if player == 'X' or player =='x':
             player_idx = 0
-        elif player == 'Y' or player == 'y':
+        elif player == 'O' or player == 'o':
             player_idx = 1
         current_state = "Not Done"
         winner = None
@@ -135,8 +135,11 @@ if __name__ == "__main__":
             if winner is not None:
                 if winner == 'X':
                     print("You have lost to the bot! AI Wins!")
+                else:
+                    print("You have beat the bot!")
             elif current_state is "Draw":
-                print("Draw!")
+                print_board(board)
+                print("Game ended in a draw!")
             player_idx = (player_idx + 1)%2
         play = input("Play again? Y/N:\n")
-    print("---Game end gg---")
+    print("---Game end GG---")
